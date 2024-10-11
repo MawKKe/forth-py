@@ -30,10 +30,16 @@ homepage = 'https://github.com/MawKKe/forth-py'
 Issues = 'https://github.com/MawKKe/forth-py/issues'
 
 [project.scripts]
-forth = 'forth:main'
+forth = 'forth.main:cli'
+
+[tool.hatch.build.targets.wheel]
+packages = ['src/forth']
+
+[tool.hatch.build.targets.sdist]
+only-include = ['src', 'tests']
 
 [tool.pytest.ini_options]
-pythonpath = ["."]
+pythonpath = [".", "src"]
 
 [tool.coverage.report]
 exclude_also = ["if __name__ == .__main__.:"]
