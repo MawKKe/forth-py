@@ -3,6 +3,8 @@ import shlex
 import sys
 from pathlib import Path
 
+import decimal
+
 import typing as t 
 from dataclasses import dataclass, field
 
@@ -26,7 +28,8 @@ class VM:
         op = self.env.get(tok)
 
         if op is None:
-            self.stack = self.stack + [tok]
+            value = decimal.Decimal(tok)
+            self.stack = self.stack + [value]
             return
 
         n_args, n_ret, callable = op
@@ -60,16 +63,16 @@ def stack_split(stack, n):
 
 
 def op_add(arg1, arg2):
-    return int(arg1) + int(arg2)
+    return arg1 + arg2
 
 def op_sub(arg1, arg2):
-    return int(arg1) - int(arg2)
+    return arg1 - arg2
 
 def op_mul(arg1, arg2):
-    return int(arg1) * int(arg2)
+    return arg1 * arg2
 
 def op_div(arg1, arg2):
-    return int(arg1) / int(arg2)
+    return arg1 / arg2
 
 def op_cr():
     print()
