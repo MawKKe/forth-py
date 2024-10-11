@@ -5,51 +5,51 @@ import forth
 import decimal
 
 
-def test_handle_token0():
+def test_eval_token0():
     vm = forth.VM()
 
     # NOTE: not registering any functions. forth.VM is pretty useless.
     assert vm.stack == []
 
-    vm.handle_token('1')
-    vm.handle_token('1')
+    vm.eval_token('1')
+    vm.eval_token('1')
     assert vm.stack ==[1, 1]
 
     with pytest.raises(decimal.InvalidOperation):
-        vm.handle_token('+')
+        vm.eval_token('+')
 
 
-def test_handle_token1():
+def test_eval_token1():
     vm = forth.VM()
-    vm.env.register('+', 2, 1, forth.op_add)
+    vm.env.register('+', forth.op_add)
 
     assert vm.stack == []
 
-    vm.handle_token('1')
+    vm.eval_token('1')
 
     assert vm.stack == [1]
 
-    vm.handle_token('1')
+    vm.eval_token('1')
 
     assert vm.stack == [1, 1]
 
 
-def test_handle_token2():
+def test_eval_token2():
     vm = forth.VM()
-    vm.env.register('+', 2, 1, forth.op_add)
-    vm.handle_token('1')
-    vm.handle_token('1')
-    vm.handle_token('1')
-    vm.handle_token('+')
+    vm.env.register('+', forth.op_add)
+    vm.eval_token('1')
+    vm.eval_token('1')
+    vm.eval_token('1')
+    vm.eval_token('+')
     assert vm.stack == [1, 2]
 
 
-def test_handle_token3():
+def test_eval_token3():
     vm = forth.VM()
-    vm.env.register('+', 2, 1, forth.op_add)
-    vm.handle_token('-1')
-    vm.handle_token('-4')
-    vm.handle_token('+')
+    vm.env.register('+', forth.op_add)
+    vm.eval_token('-1')
+    vm.eval_token('-4')
+    vm.eval_token('+')
     assert vm.stack == [-5]
 
 
@@ -76,7 +76,7 @@ def test_tokenize():
 ])
 def test_eval(line, expect):
     vm = forth.VM()
-    vm.env.register('+', 2, 1, forth.op_add)
+    vm.env.register('+', forth.op_add)
 
     vm.eval_line(line)
 

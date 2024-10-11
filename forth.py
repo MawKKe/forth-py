@@ -8,54 +8,56 @@ import decimal
 import typing as t 
 from dataclasses import dataclass, field
 
+from functools import partial
 
 @dataclass
 class Env:
-    ops: dict[str, tuple[int, int, t.Callable]] = field(default_factory=dict)
+    ops: dict = field(default_factory=dict)
 
     def get(self, tok: str):
         return self.ops.get(tok, None)
 
-    def register(self, tok: str, n_args: int, n_ret: int, callable: t.Callable):
-        self.ops[tok] = (n_args, n_ret, callable)
+    def register(self, tok: str, callable: t.Callable):
+        self.ops[tok] = callable
 
 @dataclass
 class VM:
     stack: list = field(default_factory=list)
     env: Env = field(default_factory=Env)
 
-    def handle_token(self, tok: str):
+    def eval_token(self, tok: str):
         op = self.env.get(tok)
 
         if op is None:
             value = decimal.Decimal(tok)
-            self.stack = self.stack + [value]
+            self.stack.append(value)
             return
 
-        n_args, n_ret, callable = op
+        op(self)
 
-        stack, args = stack_split(self.stack, n_args)
 
-        res = callable(*args)
-
-        match n_ret:
-            case 0:
-                new = []
-            case 1:
-                new = [res]
-            case _:
-                new = res
-
-        self.stack = stack + new
+    def eval_tokens(self, tokens: list):
+        for tok in tokens:
+            self.eval_token(tok)
 
     def eval(self, content: str):
         for line in content.splitlines():
             self.eval_line(line)
 
     def eval_line(self, line: str):
-        line = line.strip()
-        for tok in tokenize(line):
-            self.handle_token(tok)
+        tokens = tokenize(line.strip())
+
+        if not tokens:
+            return
+
+        if tokens[0] == ':':
+            assert tokens[-1] == ';'
+            _, name, *body, _ = tokens
+            self.env.register(name, partial(VM.eval_tokens, tokens=body))
+
+        else:
+            self.eval_tokens(tokens)
+
 
 
 def tokenize(line: str) -> list[str]:
@@ -68,36 +70,45 @@ def stack_split(stack, n):
     return stack[:-n], stack[-n:]
 
 
-def op_add(arg1, arg2):
-    return arg1 + arg2
+def op_add(vm: VM):
+    rhs = vm.stack.pop()
+    lhs = vm.stack.pop()
+    vm.stack.append(lhs + rhs)
 
-def op_sub(arg1, arg2):
-    return arg1 - arg2
+def op_sub(vm: VM):
+    rhs = vm.stack.pop()
+    lhs = vm.stack.pop()
+    vm.stack.append(lhs - rhs)
 
-def op_mul(arg1, arg2):
-    return arg1 * arg2
+def op_mul(vm: VM):
+    rhs = vm.stack.pop()
+    lhs = vm.stack.pop()
+    vm.stack.append(lhs * rhs)
 
-def op_div(arg1, arg2):
-    return arg1 / arg2
+def op_div(vm: VM):
+    rhs = vm.stack.pop()
+    lhs = vm.stack.pop()
+    vm.stack.append(lhs / rhs)
 
-def op_cr():
+def op_cr(_: VM):
     print()
 
-def op_dup(arg1):
-    return [arg1, arg1]
+def op_dup(vm: VM):
+    vm.stack.append(vm.stack[-1])
 
-def op_print(arg):
-    print(arg, end='')
+def op_print(vm: VM):
+    val = vm.stack.pop()
+    print(val, end='')
 
 def make_default_vm():
     vm = VM()
-    vm.env.register('+', 2, 1, op_add)
-    vm.env.register('-', 2, 1, op_sub)
-    vm.env.register('*', 2, 1, op_mul)
-    vm.env.register('/', 2, 1, op_div)
-    vm.env.register('CR', 0, 0, op_cr)
-    vm.env.register('DUP', 1, 2, op_dup)
-    vm.env.register('.', 1, 0, op_print)
+    vm.env.register('+', op_add)
+    vm.env.register('-', op_sub)
+    vm.env.register('*', op_mul)
+    vm.env.register('/', op_div)
+    vm.env.register('CR', op_cr)
+    vm.env.register('DUP', op_dup)
+    vm.env.register('.', op_print)
     return vm
 
 def main():
