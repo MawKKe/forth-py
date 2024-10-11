@@ -38,7 +38,13 @@ class VM:
 
         res = callable(*args)
 
-        new = [res] if n_ret else []
+        match n_ret:
+            case 0:
+                new = []
+            case 1:
+                new = [res]
+            case _:
+                new = res
 
         self.stack = stack + new
 
@@ -77,6 +83,9 @@ def op_div(arg1, arg2):
 def op_cr():
     print()
 
+def op_dup(arg1):
+    return [arg1, arg1]
+
 def op_print(arg):
     print(arg, end='')
 
@@ -87,6 +96,7 @@ def make_default_vm():
     vm.env.register('*', 2, 1, op_mul)
     vm.env.register('/', 2, 1, op_div)
     vm.env.register('CR', 0, 0, op_cr)
+    vm.env.register('DUP', 1, 2, op_dup)
     vm.env.register('.', 1, 0, op_print)
     return vm
 
