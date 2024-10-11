@@ -69,6 +69,12 @@ def stack_split(stack, n):
         return stack, []
     return stack[:-n], stack[-n:]
 
+def op_writeb(vm: VM):
+    n = vm.stack.pop()
+    for _ in range(int(n)):
+        b = vm.stack.pop()
+        assert 0 <= b <= 0xFF
+        sys.stdout.buffer.write(bytes([int(b)]))
 
 def op_add(vm: VM):
     rhs = vm.stack.pop()
@@ -102,6 +108,7 @@ def op_print(vm: VM):
 
 def make_default_vm():
     vm = VM()
+    vm.env.register('WRITEB', op_writeb)
     vm.env.register('+', op_add)
     vm.env.register('-', op_sub)
     vm.env.register('*', op_mul)
