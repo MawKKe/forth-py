@@ -81,6 +81,25 @@ def test_eval(line: str, expect: list[Number]) -> None:
     assert vm.stack == expect
 
 
+def test_func_def_and_call() -> None:
+    prog = """
+    : MUL2 2 * ;
+    1 MUL2 MUL2 MUL2 MUL2 MUL2 MUL2 MUL2 MUL2
+    """
+    vm = forth.VM()
+
+    assert not vm.env.keys()
+
+    vm.register_op('*', forth.op_mul)
+
+    assert set(vm.env.keys()) == {'*'}
+
+    vm.eval(prog)
+
+    assert vm.stack == [256]
+    assert set(vm.env.keys()) == {'*', 'MUL2'}
+
+
 if __name__ == '__main__':
     import sys
 
