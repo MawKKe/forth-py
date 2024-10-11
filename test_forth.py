@@ -23,7 +23,7 @@ def test_eval_token0() -> None:
 
 def test_eval_token1() -> None:
     vm = forth.VM()
-    vm.env.register('+', forth.op_add)
+    vm.register_op('+', forth.op_add)
 
     assert vm.stack == []
 
@@ -38,7 +38,7 @@ def test_eval_token1() -> None:
 
 def test_eval_token2() -> None:
     vm = forth.VM()
-    vm.env.register('+', forth.op_add)
+    vm.register_op('+', forth.op_add)
     vm.eval_token('1')
     vm.eval_token('1')
     vm.eval_token('1')
@@ -48,7 +48,7 @@ def test_eval_token2() -> None:
 
 def test_eval_token3() -> None:
     vm = forth.VM()
-    vm.env.register('+', forth.op_add)
+    vm.register_op('+', forth.op_add)
     vm.eval_token('-1')
     vm.eval_token('-4')
     vm.eval_token('+')
@@ -74,9 +74,14 @@ def test_tokenize() -> None:
 )
 def test_eval(line: str, expect: list[Number]) -> None:
     vm = forth.VM()
-    vm.env.register('+', forth.op_add)
+    vm.register_op('+', forth.op_add)
 
     vm.eval_line(line)
 
     assert vm.stack == expect
 
+
+if __name__ == '__main__':
+    import sys
+
+    sys.exit(pytest.main(['-v']))

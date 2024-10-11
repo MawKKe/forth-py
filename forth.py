@@ -21,20 +21,12 @@ Op = t.Callable[['VM'], None]
 
 
 @dataclass
-class Env:
-    ops: dict[str, Op] = field(default_factory=dict)
-
-    def get(self, tok: str) -> t.Optional[t.Callable]:
-        return self.ops.get(tok, None)
-
-    def register(self, tok: str, callable: t.Callable) -> None:
-        self.ops[tok] = callable
-
-
-@dataclass
 class VM:
     stack: list = field(default_factory=list)
-    env: Env = field(default_factory=Env)
+    env: dict[str, Op] = field(default_factory=dict)
+
+    def register_op(self, token: str, op: Op) -> None:
+        self.env[token] = op
 
     def eval_token(self, tok: str) -> None:
         op = self.env.get(tok)
@@ -63,7 +55,7 @@ class VM:
         if tokens[0] == ':':
             assert tokens[-1] == ';'
             _, name, *body, _ = tokens
-            self.env.register(name, partial(VM.eval_tokens, tokens=body))
+            self.register_op(name, partial(VM.eval_tokens, tokens=body))
 
         else:
             self.eval_tokens(tokens)
@@ -116,21 +108,28 @@ def op_print(vm: VM) -> None:
 
 def make_default_vm() -> VM:
     vm = VM()
-    vm.env.register('WRITEB', op_writeb)
-    vm.env.register('+', op_add)
-    vm.env.register('-', op_sub)
-    vm.env.register('*', op_mul)
-    vm.env.register('/', op_div)
-    vm.env.register('CR', op_cr)
-    vm.env.register('DUP', op_dup)
-    vm.env.register('.', op_print)
+    vm.register_op('WRITEB', op_writeb)
+    vm.register_op('+', op_add)
+    vm.register_op('-', op_sub)
+    vm.register_op('*', op_mul)
+    vm.register_op('/', op_div)
+    vm.register_op('CR', op_cr)
+    vm.register_op('DUP', op_dup)
+    vm.register_op('.', op_print)
     return vm
 
 
 def main(argv: list[str]) -> int:
+    p = argparse.ArgumentParser(prog=argv[0])
+    p.add_argument('sources', nargs='+', type=Path)
+    args = p.parse_args(argv[1:])
     vm = make_default_vm()
-    vm.eval(content)
+
+    for src in args.sources:
+        vm.eval(src.read_text())
+
+    return 0
+
 
 if __name__ == '__main__':
-    main()
-
+    sys.exit(main(sys.argv))
