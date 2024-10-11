@@ -5,27 +5,38 @@ from pathlib import Path
 
 import decimal
 
-import typing as t 
+import typing as t
 from dataclasses import dataclass, field
 
 from functools import partial
 
+import argparse
+
+
+def tokenize(line: str) -> list[str]:
+    return shlex.split(line.strip())
+
+
+Op = t.Callable[['VM'], None]
+
+
 @dataclass
 class Env:
-    ops: dict = field(default_factory=dict)
+    ops: dict[str, Op] = field(default_factory=dict)
 
-    def get(self, tok: str):
+    def get(self, tok: str) -> t.Optional[t.Callable]:
         return self.ops.get(tok, None)
 
-    def register(self, tok: str, callable: t.Callable):
+    def register(self, tok: str, callable: t.Callable) -> None:
         self.ops[tok] = callable
+
 
 @dataclass
 class VM:
     stack: list = field(default_factory=list)
     env: Env = field(default_factory=Env)
 
-    def eval_token(self, tok: str):
+    def eval_token(self, tok: str) -> None:
         op = self.env.get(tok)
 
         if op is None:
@@ -35,16 +46,15 @@ class VM:
 
         op(self)
 
-
-    def eval_tokens(self, tokens: list):
+    def eval_tokens(self, tokens: list[str]) -> None:
         for tok in tokens:
             self.eval_token(tok)
 
-    def eval(self, content: str):
+    def eval(self, content: str) -> None:
         for line in content.splitlines():
             self.eval_line(line)
 
-    def eval_line(self, line: str):
+    def eval_line(self, line: str) -> None:
         tokens = tokenize(line.strip())
 
         if not tokens:
@@ -59,54 +69,52 @@ class VM:
             self.eval_tokens(tokens)
 
 
-
-def tokenize(line: str) -> list[str]:
-    return shlex.split(line.strip())
-
-
-def stack_split(stack, n):
-    if n == 0:
-        return stack, []
-    return stack[:-n], stack[-n:]
-
-def op_writeb(vm: VM):
+def op_writeb(vm: VM) -> None:
     n = vm.stack.pop()
     for _ in range(int(n)):
         b = vm.stack.pop()
         assert 0 <= b <= 0xFF
         sys.stdout.buffer.write(bytes([int(b)]))
 
-def op_add(vm: VM):
+
+def op_add(vm: VM) -> None:
     rhs = vm.stack.pop()
     lhs = vm.stack.pop()
     vm.stack.append(lhs + rhs)
 
-def op_sub(vm: VM):
+
+def op_sub(vm: VM) -> None:
     rhs = vm.stack.pop()
     lhs = vm.stack.pop()
     vm.stack.append(lhs - rhs)
 
-def op_mul(vm: VM):
+
+def op_mul(vm: VM) -> None:
     rhs = vm.stack.pop()
     lhs = vm.stack.pop()
     vm.stack.append(lhs * rhs)
 
-def op_div(vm: VM):
+
+def op_div(vm: VM) -> None:
     rhs = vm.stack.pop()
     lhs = vm.stack.pop()
     vm.stack.append(lhs / rhs)
 
-def op_cr(_: VM):
+
+def op_cr(_: VM) -> None:
     print()
 
-def op_dup(vm: VM):
+
+def op_dup(vm: VM) -> None:
     vm.stack.append(vm.stack[-1])
 
-def op_print(vm: VM):
+
+def op_print(vm: VM) -> None:
     val = vm.stack.pop()
     print(val, end='')
 
-def make_default_vm():
+
+def make_default_vm() -> VM:
     vm = VM()
     vm.env.register('WRITEB', op_writeb)
     vm.env.register('+', op_add)
@@ -118,8 +126,8 @@ def make_default_vm():
     vm.env.register('.', op_print)
     return vm
 
-def main():
-    content = Path(sys.argv[1]).read_text('utf8')
+
+def main(argv: list[str]) -> int:
     vm = make_default_vm()
     vm.eval(content)
 
