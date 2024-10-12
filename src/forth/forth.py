@@ -1,4 +1,4 @@
-import decimal
+import fractions
 import shlex
 import typing as t
 from dataclasses import dataclass, field
@@ -33,15 +33,29 @@ class VM:
     def register_op(self, token: str, op: Op) -> None:
         self.env[token] = op
 
-    def eval_token(self, tok: str) -> None:
-        op = self.env.get(tok)
+    def parse_number(self, tok: str) -> t.Optional[t.Any]:
+        if '.' in tok:
+            return float(tok)
+        if '/' in tok:
+            return fractions.Fraction(tok)
+        if 'j' in tok:
+            return complex(tok)
+        if tok.startswith('0x'):
+            return int(tok[2:], 16)
+        if tok.startswith('0b'):
+            return int(tok[2:], 2)
+        return int(tok)
 
-        if op is None:
-            value = decimal.Decimal(tok)
-            self.stack.append(value)
+    def eval_token(self, tok: str) -> None:
+        if op := self.env.get(tok):
+            op(self)
             return
 
-        op(self)
+        if (val := self.parse_number(tok)) is not None:
+            self.stack.append(val)
+            return
+
+        raise ValueError(f'Invalid token: {tok}')
 
     def eval_tokens(self, tokens: list[str]) -> None:
         for tok in tokens:
