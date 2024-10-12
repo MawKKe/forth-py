@@ -6,7 +6,7 @@ from forth import VM
 def op_writeb(vm: VM) -> None:
     n = vm.stack.pop()
     vm._assert_stack('op_writeb', n)
-    bv = bytes(reversed(vm.pop(n)))
+    bv = bytes(vm.pop(n))
     sys.stdout.buffer.write(bv)
 
 

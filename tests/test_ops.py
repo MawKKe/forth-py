@@ -80,7 +80,7 @@ def test_io(capfdbinary) -> None:  # type: ignore
     assert out == b'42'
 
     msg = b'hello'
-    vm.eval_tokens([str(c) for c in reversed(msg)])
+    vm.eval_tokens([str(c) for c in msg])
     vm.eval_token(f'{len(msg)}')
     forth.ops.op_writeb(vm)
     sys.stdout.buffer.flush()
