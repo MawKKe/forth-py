@@ -1,8 +1,9 @@
-import forth
-import forth.ops
+import sys
 
 import pytest
-import sys
+
+import forth
+import forth.ops
 
 
 @pytest.mark.parametrize(

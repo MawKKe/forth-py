@@ -1,6 +1,8 @@
-import forth.main
-import pytest
 import io
+
+import pytest
+
+import forth.main
 
 
 def test_main_help() -> None:

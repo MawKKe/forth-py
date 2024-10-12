@@ -1,7 +1,8 @@
-import sys
 import operator
+import sys
 import typing as t
-from forth import VM
+
+from .forth import VM
 
 BinOp = t.Callable[[t.Any, t.Any], t.Any]
 

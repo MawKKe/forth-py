@@ -37,6 +37,9 @@ build:
 fmt format:
 	ruff format -- src tests
 
+isort:
+	isort .
+
 lint:
 	ruff check --output-format=full -- src tests
 

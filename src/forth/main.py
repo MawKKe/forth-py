@@ -1,7 +1,7 @@
-import sys
-from pathlib import Path
 import argparse
+import sys
 import typing as t
+from pathlib import Path
 
 import forth
 

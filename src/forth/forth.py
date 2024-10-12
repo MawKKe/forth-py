@@ -1,10 +1,8 @@
 import typing as t
 from dataclasses import dataclass, field
-
 from functools import partial
 
 from . import utils
-
 
 Op = t.Callable[['VM'], None]
 

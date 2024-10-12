@@ -1,7 +1,7 @@
-import shlex
 import fractions
-import typing as t
 import io
+import shlex
+import typing as t
 
 
 def gen_tokens_from_line_iterable(file: t.Iterable) -> t.Iterator[str]:

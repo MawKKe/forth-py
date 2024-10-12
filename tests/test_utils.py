@@ -1,10 +1,9 @@
+from fractions import Fraction
+from numbers import Number
+
 import pytest
 
 from forth import utils
-
-from fractions import Fraction
-
-from numbers import Number
 
 
 def test_gen_tokens() -> None:

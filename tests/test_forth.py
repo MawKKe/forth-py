@@ -1,8 +1,8 @@
+from fractions import Fraction
+
 import pytest
 
 import forth
-
-from fractions import Fraction
 
 
 def test_eval_noenv() -> None:
