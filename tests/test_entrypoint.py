@@ -36,8 +36,9 @@ def test_main_stdin_as_input_file(monkeypatch, capfdbinary):  # type: ignore
 
     forth.main.main(['forth', '-'])
 
-    out, _ = capfdbinary.readouterr()
+    out, err = capfdbinary.readouterr()
     assert out == b'42\n'
+    assert err == b''
 
 
 def test_main_inline_src(capfdbinary):  # type: ignore
@@ -72,8 +73,9 @@ def test_main_halt(tmp_path, capfdbinary):  # type: ignore
 
     forth.main.main(['forth', str(src1), str(src2)])
 
-    out, _ = capfdbinary.readouterr()
+    out, err = capfdbinary.readouterr()
     assert out == b'2\n'
+    assert err == b''
 
 
 def test_show_stats(monkeypatch, capfdbinary):  # type: ignore
