@@ -20,7 +20,7 @@ def main(argv: list[str]) -> int:
 
 
 # set as entrypoint in [project.scripts]
-def cli() -> None:
+def cli() -> None:  # pragma: no cover
     sys.exit(main(sys.argv))
 
 
