@@ -14,6 +14,7 @@ def chain_files(files: list) -> t.Iterator[str]:
 def main(argv: list[str]) -> int:
     p = argparse.ArgumentParser(prog=Path(argv[0]).name)
     p.add_argument('sources', nargs='+', metavar='src', type=argparse.FileType('r'))
+    p.add_argument('--show-stats', action='store_true')
     args = p.parse_args(argv[1:])
 
     vm = forth.VM()
@@ -22,6 +23,9 @@ def main(argv: list[str]) -> int:
     token_stream = chain_files(args.sources)
 
     vm.eval_token_stream(token_stream)
+
+    if args.show_stats:
+        print('# counters:', vm.get_counters())
 
     return vm.status()
 

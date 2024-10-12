@@ -40,3 +40,17 @@ def test_main_halt(tmp_path, capfdbinary):  # type: ignore
 
     out, _ = capfdbinary.readouterr()
     assert out == b'2\n'
+
+
+def test_show_stats(monkeypatch, capfdbinary):  # type: ignore
+    monkeypatch.setattr('sys.stdin', io.StringIO('21 2 * . CR'))
+
+    forth.main.main(['forth', '-'])
+
+    out, _ = capfdbinary.readouterr()
+    assert b"# counters: {'tokens_processed':" not in out
+
+    forth.main.main(['forth', '-', '--show-stats'])
+
+    out, _ = capfdbinary.readouterr()
+    assert b"# counters: {'tokens_processed':" in out

@@ -15,6 +15,8 @@ class VM:
     _env: dict[str, Op] = field(default_factory=dict)
     _halted: bool = False
 
+    _ctr_tokens_processed: int = 0
+
     def stack(self) -> list:
         return self._stack
 
@@ -50,6 +52,7 @@ class VM:
         for tok in stream:
             if self.is_halted():
                 return
+            self._ctr_tokens_processed += 1
             if tok == ':':
                 assert not in_func_def, 'Already inside function definition'
                 in_func_def = True
@@ -77,3 +80,8 @@ class VM:
 
     def eval_string(self, source: str) -> None:
         self.eval_token_stream(utils.gen_tokens(source))
+
+    def get_counters(self) -> dict:
+        return {
+            'tokens_processed': self._ctr_tokens_processed,
+        }

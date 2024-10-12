@@ -54,3 +54,15 @@ def test_func_def_and_call() -> None:
 
     assert vm.stack() == [256]
     assert set(vm.env().keys()) == {'*', 'MUL2'}
+
+
+def test_counters() -> None:  # type: ignore
+    vm = forth.VM()
+    forth.ops.register_default_ops(vm)
+    assert vm.get_counters()['tokens_processed'] == 0
+    vm.eval_string('1 1 +')
+    assert vm.get_counters()['tokens_processed'] == 3
+    vm.eval_string(': fun 20 * 3 + ;')
+    vm.eval_string('7 + fun')
+    assert vm.get_counters()['tokens_processed'] == 17
+    assert vm.stack() == [183]
