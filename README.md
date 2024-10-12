@@ -2,6 +2,9 @@
 
 Stack based computing for all!
 
+Probably not a 100% valid Forth implementation; mostly served as an educational
+exercise for me. However, I had a lot of fun writing this!
+
 ## Running
 
 Write your program in a file (e.g. 'testi.forth'), then run it:
@@ -11,7 +14,14 @@ Write your program in a file (e.g. 'testi.forth'), then run it:
 
 ## Testing the implementation
 
-    $ pytest test_forth.py
+    $ pytest
+
+## Development
+
+    $ make
+
+Then run Ctrl+Shift+P in VScode > 'Python: Select Interpreter'.
+Now you should be able to run pytests easily using VSCode Testing view.
 
 ## License
 
