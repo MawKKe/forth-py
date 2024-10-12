@@ -17,6 +17,8 @@ class VM:
     def pop(self, n: int = 1) -> list:
         if n == 0:
             return []
+        if n > len(self.stack):
+            raise ValueError(f'pop(n={n}) requested, stack only has {len(self.stack)} elems')
         self.stack, res = self.stack[:-n], self.stack[-n:]
         return res
 

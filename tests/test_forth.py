@@ -32,6 +32,25 @@ def test_eval_token1() -> None:
     assert vm.stack == [1, 1]
 
 
+def test_pop() -> None:
+    vm = forth.VM()
+    vm.eval('1 2 3 4 5 6')
+    assert vm.stack == [1, 2, 3, 4, 5, 6]
+
+    assert vm.pop(0) == []
+    assert vm.stack == [1, 2, 3, 4, 5, 6]
+
+    assert vm.pop(1) == [6]
+    assert vm.stack == [1, 2, 3, 4, 5]
+
+    assert vm.pop(2) == [4, 5]
+    assert vm.stack == [1, 2, 3]
+
+    with pytest.raises(ValueError):
+        assert len(vm.stack) < 4
+        _ = vm.pop(4)
+
+
 def test_eval_token2() -> None:
     vm = forth.VM()
     vm.register_op('+', forth.ops.op_add)
