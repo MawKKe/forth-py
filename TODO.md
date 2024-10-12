@@ -14,6 +14,7 @@ implementations, but to implement most of what a useful VM would need.
 - [x] implement CLI interface
 - [x] implement multi-file support (CLI)
 - [x] implement basic stats counter (processed token count)
+- [x] implement basic logical ops (<,<=,>,>=,==,and,or,not)
 - [ ] implement string handling
 - [ ] implement branching, loops
 - [ ] implement variables (we kinda already do through user-defined funcs)

@@ -37,7 +37,7 @@ class VM:
         self._stack, res = self._stack[:-n], self._stack[-n:]
         return res
 
-    def push(self, *values: list) -> None:
+    def push(self, *values) -> None:  # type: ignore
         self._stack.extend(values)
 
     def status(self) -> int:

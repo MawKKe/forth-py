@@ -127,3 +127,33 @@ def test_halt() -> None:  # type: ignore
     assert vm.stack() == [2]
     assert list(vm.env().items()) == [('+', forth.ops.op_add)]
     assert vm.is_halted()
+
+
+@pytest.mark.parametrize(
+    'op, args, expect',
+    [
+        (forth.ops.op_lt, '1 1', False),
+        (forth.ops.op_lt, '1 2', True),
+        (forth.ops.op_le, '1 1', True),
+        (forth.ops.op_le, '1 2', True),
+        (forth.ops.op_gt, '1 1', False),
+        (forth.ops.op_gt, '2 1', True),
+        (forth.ops.op_ge, '1 1', True),
+        (forth.ops.op_ge, '2 1', True),
+        (forth.ops.op_and, '1 1', True),
+        (forth.ops.op_and, '1 0', False),
+        (forth.ops.op_and, '0 0', False),
+        (forth.ops.op_or, '1 0', True),
+        (forth.ops.op_or, '0 1', True),
+        (forth.ops.op_or, '0 0', False),
+        (forth.ops.op_eq, '1 1', True),
+        (forth.ops.op_eq, '0 1', False),
+        (forth.ops.op_not, '1', False),
+        (forth.ops.op_not, '0', True),
+    ],
+)
+def test_logical_ops(op, args, expect) -> None:  # type: ignore
+    vm = forth.VM()
+    vm.eval_string(args)
+    op(vm)
+    assert vm.stack() == [expect]
