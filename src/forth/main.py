@@ -14,6 +14,8 @@ def main(argv: list[str]) -> int:
     vm = forth.ops.register_default_ops(vm)
 
     for src in args.sources:
+        if vm.is_halted():
+            break
         vm.eval(src.read())
 
     return vm.status()

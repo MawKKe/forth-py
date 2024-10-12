@@ -13,6 +13,13 @@ Op = t.Callable[['VM'], None]
 class VM:
     stack: list = field(default_factory=list)
     env: dict[str, Op] = field(default_factory=dict)
+    _halted: bool = False
+
+    def is_halted(self) -> bool:
+        return self._halted
+
+    def halt(self) -> None:
+        self._halted = True
 
     def pop(self, n: int = 1) -> list:
         if n == 0:
@@ -34,6 +41,8 @@ class VM:
         self.env[token] = op
 
     def eval_token(self, tok: str) -> None:
+        if self.is_halted():
+            return
         if op := self.env.get(tok):
             op(self)
             return

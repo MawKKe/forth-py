@@ -77,6 +77,10 @@ def op_assert(vm: VM) -> None:
     assert value, f'value={value}, stack={vm.stack}'
 
 
+def op_halt(vm: VM) -> None:
+    vm.halt()
+
+
 def register_default_ops(vm: VM) -> VM:
     vm.register_op('WRITEB', op_writeb)
     vm.register_op('+', op_add)
@@ -91,4 +95,5 @@ def register_default_ops(vm: VM) -> VM:
     vm.register_op('dup', op_dup)
     vm.register_op('assert', op_assert)
     vm.register_op('.', op_print)
+    vm.register_op('halt', op_halt)
     return vm

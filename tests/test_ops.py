@@ -94,3 +94,26 @@ def test_register_default_ops() -> None:  # type: ignore
     assert len(vm.env) == 0
     forth.ops.register_default_ops(vm)
     assert len(vm.env) != 0
+
+
+def test_halt() -> None:  # type: ignore
+    vm = forth.VM()
+    vm.register_op('+', forth.ops.op_add)
+    assert vm.stack == []
+    assert list(vm.env.items()) == [('+', forth.ops.op_add)]
+    assert not vm.is_halted()
+
+    vm.eval('1 1 +')
+    assert vm.stack == [2]
+    assert list(vm.env.items()) == [('+', forth.ops.op_add)]
+    assert not vm.is_halted()
+
+    forth.ops.op_halt(vm)
+    assert vm.stack == [2]
+    assert list(vm.env.items()) == [('+', forth.ops.op_add)]
+    assert vm.is_halted()
+
+    vm.eval('1 2 3 4')  # should not do anything since we are halted
+    assert vm.stack == [2]
+    assert list(vm.env.items()) == [('+', forth.ops.op_add)]
+    assert vm.is_halted()
