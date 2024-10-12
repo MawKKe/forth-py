@@ -13,7 +13,7 @@ def test_eval_token0() -> None:
     vm.eval_token('1')
     assert vm.stack == [1, 1]
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match='Invalid token'):
         vm.eval_token('+')
 
 
