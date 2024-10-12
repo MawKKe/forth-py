@@ -1,12 +1,17 @@
 import shlex
 import fractions
 import typing as t
+import io
+
+
+def gen_tokens_from_line_iterable(file: t.Iterable) -> t.Iterator[str]:
+    for line in file:
+        line = strip_trailing_comment(line).strip()
+        yield from shlex.split(line.strip())
 
 
 def gen_tokens(source: str) -> t.Iterator[str]:
-    for line in source.splitlines():
-        line = strip_trailing_comment(line).strip()
-        yield from shlex.split(line.strip())
+    return gen_tokens_from_line_iterable(io.StringIO(source))
 
 
 def strip_trailing_comment(line: str, commend_sep: str = '#') -> str:

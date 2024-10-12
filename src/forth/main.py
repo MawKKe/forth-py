@@ -8,7 +8,7 @@ import forth
 
 def chain_files(files: list) -> t.Iterator[str]:
     for file in files:
-        yield from forth.gen_tokens(file.read())
+        yield from forth.gen_tokens_from_line_iterable(file)
 
 
 def main(argv: list[str]) -> int:
