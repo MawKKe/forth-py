@@ -1,17 +1,15 @@
-
-
 10 20 30.123456
-# 1 trace
+
 + + . CR
 
 0 . CR
 
 3 2 / . CR
 
-: ADD1 1 + ;
-: ADD39 38 ADD1 + ;
+: add1 1 + ;
+: add39 38 add1 + ;
 
-5 2 - ADD39 . CR
+5 2 - add39 . CR
 
 # 2/3 1/4 + . CR
 
@@ -21,14 +19,14 @@
 
 : e 2.718281828459045 ;
 
-: euler pi i * e flip pow ;
+: euler pi i * e FLIP POW ;
 
 999 . CR
 euler . CR
 
-2 10 pow 1.61 7 pow 1j * . CR
+2 10 POW 1.61 7 POW 1j * . CR
 
-2/3 dup . CR
-3 dup . CR
-pow dup . CR
-1 flip / . CR
+2/3 DUP . CR
+3 DUP . CR
+POW DUP . CR
+1 FLIP / . CR

@@ -32,7 +32,7 @@ def test_main_stdin_as_input_file(monkeypatch, capfdbinary):  # type: ignore
 
 def test_main_halt(tmp_path, capfdbinary):  # type: ignore
     src1 = tmp_path / 'src1.forth'
-    src1.write_bytes(b'1 1 + . CR\nhalt')
+    src1.write_bytes(b'1 1 + . CR HALT')
     src2 = tmp_path / 'src2.forth'
     src2.write_bytes(b'2 3 * . CR')
 

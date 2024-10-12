@@ -5,7 +5,10 @@
 7 *
 
 # Is...
-nop
+NOP
 
 # Is...
+NOP
+
+# !!!
 . CR

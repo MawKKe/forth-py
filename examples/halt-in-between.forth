@@ -1,6 +1,6 @@
 1 1 + . CR
 
-halt
+HALT
 
 # should not be printed
 2 2 * . CR

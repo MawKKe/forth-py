@@ -46,6 +46,9 @@ class VM:
     def register_op(self, token: str, op: Op) -> None:
         self._env[token] = op
 
+    def lookup_op(self, name: str) -> t.Optional[Op]:
+        return self._env.get(name)
+
     def eval_token_stream(self, stream: t.Iterable[str]) -> None:
         func: list[str] = []
         in_func_def = False
@@ -68,7 +71,7 @@ class VM:
                 func.append(tok)
                 continue
 
-            if op := self._env.get(tok):
+            if op := self.lookup_op(tok):
                 op(self)
                 continue
 

@@ -41,4 +41,4 @@ jobs:
         forth --help
     - name: Test simple script via entrypoint (stdin)
       run: |
-        echo "2 10 pow . CR" | forth - | grep -Fxq '1024' && echo 'All-OK!'
+        echo "2 10 POW . CR" | forth - | grep -Fxq '1024' && echo 'All-OK!'
