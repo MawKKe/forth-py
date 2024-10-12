@@ -5,10 +5,9 @@ from forth import VM
 
 def op_writeb(vm: VM) -> None:
     n = vm.stack.pop()
-    for _ in range(int(n)):
-        b = vm.stack.pop()
-        assert 0 <= b <= 0xFF
-        sys.stdout.buffer.write(bytes([int(b)]))
+    vm._assert_stack('op_writeb', n)
+    bv = bytes(reversed(vm.pop(n)))
+    sys.stdout.buffer.write(bv)
 
 
 def op_add(vm: VM) -> None:

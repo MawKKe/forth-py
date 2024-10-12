@@ -22,6 +22,12 @@ class VM:
     stack: list = field(default_factory=list)
     env: dict[str, Op] = field(default_factory=dict)
 
+    def pop(self, n: int = 1) -> list:
+        if n == 0:
+            return []
+        self.stack, res = self.stack[:-n], self.stack[-n:]
+        return res
+
     def status(self) -> int:
         return len(self.stack)
 
