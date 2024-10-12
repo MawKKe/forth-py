@@ -44,8 +44,7 @@ test: test-pytest test-mypy
 
 test-pytest:
 	pytest -v \
-	    --cov=audiobook_split_ffmpeg \
-	    --cov=audiobook_split_ffmpeg_new \
+	    --cov=forth \
 	    --cov-report=html:out/coverage \
 	    tests/
 
