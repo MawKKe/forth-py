@@ -66,3 +66,12 @@ def test_counters() -> None:  # type: ignore
     vm.eval_string('7 + fun')
     assert vm.get_counters()['tokens_processed'] == 17
     assert vm.stack() == [183]
+
+
+def test_string_handling(capfdbinary) -> None:  # type: ignore
+    vm = forth.VM()
+    forth.ops.register_default_ops(vm)
+    vm.eval_string('1 1 + . CR @"hello world!" . CR')
+    out, err = capfdbinary.readouterr()
+    assert err == b''
+    assert out == b'2\nhello world!\n'

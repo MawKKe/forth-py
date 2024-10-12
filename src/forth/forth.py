@@ -65,6 +65,10 @@ class VM:
                 in_func_def = False
                 continue
 
+            if len(tok) > 1 and tok[0] == '@':
+                self.push(tok[1:])
+                continue
+
             if in_func_def:
                 func.append(tok)
                 continue
