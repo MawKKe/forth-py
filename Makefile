@@ -44,9 +44,10 @@ test: test-pytest test-mypy
 
 test-pytest:
 	pytest -v \
-	    --cov=forth \
-	    --cov-report=html:out/coverage \
-	    tests/
+		--cov=forth \
+		--cov-report=html:out/coverage \
+		--cov-report=term \
+		tests/
 
 test-mypy:
 	mypy -- src
