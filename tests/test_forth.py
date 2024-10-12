@@ -54,9 +54,3 @@ def test_func_def_and_call() -> None:
 
     assert vm.stack() == [256]
     assert set(vm.env().keys()) == {'*', 'MUL2'}
-
-
-if __name__ == '__main__':
-    import sys
-
-    sys.exit(pytest.main(['-v']))
