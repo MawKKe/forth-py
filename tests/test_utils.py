@@ -7,9 +7,9 @@ from fractions import Fraction
 from numbers import Number
 
 
-def test_tokenize() -> None:
-    assert utils.tokenize('1 1 + 3 * . CR') == ['1', '1', '+', '3', '*', '.', 'CR']
-    assert utils.tokenize(' 1 -1 2 -10   9') == ['1', '-1', '2', '-10', '9']
+def test_gen_tokens() -> None:
+    assert list(utils.gen_tokens('1 1 + 3 * . CR')) == ['1', '1', '+', '3', '*', '.', 'CR']
+    assert list(utils.gen_tokens(' 1 -1 2 -10   9')) == ['1', '-1', '2', '-10', '9']
 
 
 def test_strip_trailing_comment() -> None:

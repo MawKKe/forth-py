@@ -1,8 +1,14 @@
 import sys
 from pathlib import Path
 import argparse
+import typing as t
 
 import forth
+
+
+def chain_files(files: list) -> t.Iterator[str]:
+    for file in files:
+        yield from forth.gen_tokens(file.read())
 
 
 def main(argv: list[str]) -> int:
@@ -13,10 +19,9 @@ def main(argv: list[str]) -> int:
     vm = forth.VM()
     vm = forth.ops.register_default_ops(vm)
 
-    for src in args.sources:
-        if vm.is_halted():
-            break
-        vm.eval(src.read())
+    token_stream = chain_files(args.sources)
+
+    vm.eval_token_stream(token_stream)
 
     return vm.status()
 

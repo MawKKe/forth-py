@@ -17,7 +17,7 @@ import sys
 )
 def test_arith_ops(op, prog, expect) -> None:  # type: ignore
     vm = forth.VM()
-    vm.eval(prog)
+    vm.eval_string(prog)
     op(vm)
     assert vm.stack == [expect]
 
@@ -32,8 +32,7 @@ def test_nop() -> None:  # type: ignore
     assert vm.stack == []
     assert vm.env == {}
 
-    vm.eval('1 2 3')
-
+    vm.eval_string('1 2 3')
     assert vm.stack == [1, 2, 3]
     assert vm.env == {}
 
@@ -45,13 +44,13 @@ def test_nop() -> None:  # type: ignore
 
 def test_stack_manip() -> None:  # type: ignore
     vm = forth.VM()
-    vm.eval('1')
+    vm.eval_string('1')
     assert vm.stack == [1]
     forth.ops.op_dup(vm)
     assert vm.stack == [1, 1]
 
     vm = forth.VM()
-    vm.eval('2 3')
+    vm.eval_string('2 3')
     assert vm.stack == [2, 3]
     forth.ops.op_flip(vm)
     assert vm.stack == [3, 2]
@@ -59,9 +58,9 @@ def test_stack_manip() -> None:  # type: ignore
 
 def test_assert() -> None:  # type: ignore
     vm = forth.VM()
-    vm.eval('1')
+    vm.eval_string('1')
     forth.ops.op_assert(vm)
-    vm.eval('0')
+    vm.eval_string('0')
     with pytest.raises(AssertionError, match=f'value={0}'):
         forth.ops.op_assert(vm)
 
@@ -73,15 +72,21 @@ def test_io(capfdbinary) -> None:  # type: ignore
     assert err == b''
     assert out == b'\n'
 
-    vm.eval('42')
+    forth.ops.op_cr(vm)
+    forth.ops.op_cr(vm)
+    out, err = capfdbinary.readouterr()
+    assert err == b''
+    assert out == b'\n\n'
+
+    vm.eval_string('42')
     forth.ops.op_print(vm)
     out, err = capfdbinary.readouterr()
     assert err == b''
     assert out == b'42'
 
     msg = b'hello'
-    vm.eval_tokens([str(c) for c in msg])
-    vm.eval_token(f'{len(msg)}')
+    vm.eval_token_stream([str(c) for c in msg])
+    vm.eval_token_stream([f'{len(msg)}'])
     forth.ops.op_writeb(vm)
     sys.stdout.buffer.flush()
     out, err = capfdbinary.readouterr()
@@ -103,7 +108,7 @@ def test_halt() -> None:  # type: ignore
     assert list(vm.env.items()) == [('+', forth.ops.op_add)]
     assert not vm.is_halted()
 
-    vm.eval('1 1 +')
+    vm.eval_string('1 1 +')
     assert vm.stack == [2]
     assert list(vm.env.items()) == [('+', forth.ops.op_add)]
     assert not vm.is_halted()
@@ -113,7 +118,7 @@ def test_halt() -> None:  # type: ignore
     assert list(vm.env.items()) == [('+', forth.ops.op_add)]
     assert vm.is_halted()
 
-    vm.eval('1 2 3 4')  # should not do anything since we are halted
+    vm.eval_string('1 2 3 4')  # should not do anything since we are halted
     assert vm.stack == [2]
     assert list(vm.env.items()) == [('+', forth.ops.op_add)]
     assert vm.is_halted()

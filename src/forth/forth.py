@@ -40,39 +40,36 @@ class VM:
     def register_op(self, token: str, op: Op) -> None:
         self.env[token] = op
 
-    def eval_token(self, tok: str) -> None:
-        if self.is_halted():
-            return
-        if op := self.env.get(tok):
-            op(self)
-            return
+    def eval_token_stream(self, stream: t.Iterable[str]) -> None:
+        func: list[str] = []
+        in_func_def = False
+        for tok in stream:
+            if self.is_halted():
+                return
+            if tok == ':':
+                assert not in_func_def, 'Already inside function definition'
+                in_func_def = True
+                continue
+            if tok == ';':
+                assert in_func_def, 'Spurious semicolon?'
+                self.register_op(func[0], partial(VM.eval_token_stream, stream=func[1:]))
+                func = []
+                in_func_def = False
+                continue
 
-        if (val := utils.parse_number(tok)) is not None:
-            self.stack.append(val)
-            return
+            if in_func_def:
+                func.append(tok)
+                continue
 
-        raise ValueError(f'Invalid token: {tok}')
+            if op := self.env.get(tok):
+                op(self)
+                continue
 
-    def eval_tokens(self, tokens: list[str]) -> None:
-        for tok in tokens:
-            self.eval_token(tok)
+            if (val := utils.parse_number(tok)) is not None:
+                self.stack.append(val)
+                continue
 
-    def eval(self, content: str) -> None:
-        for line in content.splitlines():
-            self.eval_line(line)
+            raise ValueError(f'Invalid token: {tok}')
 
-    def eval_line(self, line: str) -> None:
-        line = utils.strip_trailing_comment(line).strip()
-
-        tokens = utils.tokenize(line.strip())
-
-        if not tokens:
-            return
-
-        if tokens[0] == ':':
-            assert tokens[-1] == ';'
-            _, name, *body, _ = tokens
-            self.register_op(name, partial(VM.eval_tokens, tokens=body))
-
-        else:
-            self.eval_tokens(tokens)
+    def eval_string(self, source: str) -> None:
+        self.eval_token_stream(utils.gen_tokens(source))

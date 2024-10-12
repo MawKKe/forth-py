@@ -3,8 +3,10 @@ import fractions
 import typing as t
 
 
-def tokenize(line: str) -> list[str]:
-    return shlex.split(line.strip())
+def gen_tokens(source: str) -> t.Iterator[str]:
+    for line in source.splitlines():
+        line = strip_trailing_comment(line).strip()
+        yield from shlex.split(line.strip())
 
 
 def strip_trailing_comment(line: str, commend_sep: str = '#') -> str:
