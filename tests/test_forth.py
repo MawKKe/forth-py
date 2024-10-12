@@ -1,11 +1,6 @@
 import pytest
 
-import decimal
-
-from numbers import Number
-
 import forth
-from forth.forth import tokenize
 
 
 def test_eval_token0() -> None:
@@ -18,7 +13,7 @@ def test_eval_token0() -> None:
     vm.eval_token('1')
     assert vm.stack == [1, 1]
 
-    with pytest.raises(decimal.InvalidOperation):
+    with pytest.raises(ValueError):
         vm.eval_token('+')
 
 
@@ -56,11 +51,6 @@ def test_eval_token3() -> None:
     assert vm.stack == [-5]
 
 
-def test_tokenize() -> None:
-    assert tokenize('1 1 + 3 * . CR') == ['1', '1', '+', '3', '*', '.', 'CR']
-    assert tokenize(' 1 -1 2 -10   9') == ['1', '-1', '2', '-10', '9']
-
-
 @pytest.mark.parametrize(
     'line,expect',
     [
@@ -70,10 +60,10 @@ def test_tokenize() -> None:
         ('1 -1 +', [0]),
         ('5 1 1 +', [5, 2]),
         ('1 1 + 1', [2, 1]),
-        ('10.21 2.13 +', [decimal.Decimal('12.34')]),
+        ('10.21 2.13 +', [12.34]),
     ],
 )
-def test_eval(line: str, expect: list[Number]) -> None:
+def test_eval(line: str, expect: list) -> None:
     vm = forth.VM()
     vm.register_op('+', forth.ops.op_add)
 

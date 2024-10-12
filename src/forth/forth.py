@@ -1,17 +1,9 @@
-import fractions
-import shlex
 import typing as t
 from dataclasses import dataclass, field
 
 from functools import partial
 
-
-def tokenize(line: str) -> list[str]:
-    return shlex.split(line.strip())
-
-
-def strip_trailing_comment(line: str, commend_sep: str = '#') -> str:
-    return line.split(sep=commend_sep, maxsplit=1)[0]
+from . import utils
 
 
 Op = t.Callable[['VM'], None]
@@ -39,25 +31,12 @@ class VM:
     def register_op(self, token: str, op: Op) -> None:
         self.env[token] = op
 
-    def parse_number(self, tok: str) -> t.Optional[t.Any]:
-        if '.' in tok:
-            return float(tok)
-        if '/' in tok:
-            return fractions.Fraction(tok)
-        if 'j' in tok:
-            return complex(tok)
-        if tok.startswith('0x'):
-            return int(tok[2:], 16)
-        if tok.startswith('0b'):
-            return int(tok[2:], 2)
-        return int(tok)
-
     def eval_token(self, tok: str) -> None:
         if op := self.env.get(tok):
             op(self)
             return
 
-        if (val := self.parse_number(tok)) is not None:
+        if (val := utils.parse_number(tok)) is not None:
             self.stack.append(val)
             return
 
@@ -72,9 +51,9 @@ class VM:
             self.eval_line(line)
 
     def eval_line(self, line: str) -> None:
-        line = strip_trailing_comment(line).strip()
+        line = utils.strip_trailing_comment(line).strip()
 
-        tokens = tokenize(line.strip())
+        tokens = utils.tokenize(line.strip())
 
         if not tokens:
             return
