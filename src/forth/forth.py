@@ -11,9 +11,15 @@ Op = t.Callable[['VM'], None]
 
 @dataclass
 class VM:
-    stack: list = field(default_factory=list)
-    env: dict[str, Op] = field(default_factory=dict)
+    _stack: list = field(default_factory=list)
+    _env: dict[str, Op] = field(default_factory=dict)
     _halted: bool = False
+
+    def stack(self) -> list:
+        return self._stack
+
+    def env(self) -> dict:
+        return self._env
 
     def is_halted(self) -> bool:
         return self._halted
@@ -24,21 +30,19 @@ class VM:
     def pop(self, n: int = 1) -> list:
         if n == 0:
             return []
-        if n > len(self.stack):
-            raise ValueError(f'pop(n={n}) requested, stack only has {len(self.stack)} elems')
-        self.stack, res = self.stack[:-n], self.stack[-n:]
+        if n > len(self._stack):
+            raise ValueError(f'pop(n={n}) requested, stack only has {len(self._stack)} elems')
+        self._stack, res = self._stack[:-n], self._stack[-n:]
         return res
 
-    def status(self) -> int:
-        return len(self.stack)
+    def push(self, *values: list) -> None:
+        self._stack.extend(values)
 
-    def _assert_stack(self, opname: str, need_elems: int) -> None:
-        assert (
-            len(self.stack) >= need_elems
-        ), f'Op "{opname}" needs at least {need_elems} elems, have: {self.stack}'
+    def status(self) -> int:
+        return len(self._stack)
 
     def register_op(self, token: str, op: Op) -> None:
-        self.env[token] = op
+        self._env[token] = op
 
     def eval_token_stream(self, stream: t.Iterable[str]) -> None:
         func: list[str] = []
@@ -61,12 +65,12 @@ class VM:
                 func.append(tok)
                 continue
 
-            if op := self.env.get(tok):
+            if op := self._env.get(tok):
                 op(self)
                 continue
 
             if (val := utils.parse_number(tok)) is not None:
-                self.stack.append(val)
+                self._stack.append(val)
                 continue
 
             raise ValueError(f'Invalid token: {tok}')

@@ -4,45 +4,34 @@ from forth import VM
 
 
 def op_writeb(vm: VM) -> None:
-    n = vm.stack.pop()
-    vm._assert_stack('op_writeb', n)
+    [n] = vm.pop()
     bv = bytes(vm.pop(n))
     sys.stdout.buffer.write(bv)
 
 
 def op_add(vm: VM) -> None:
-    vm._assert_stack('op_add', 2)
-    rhs = vm.stack.pop()
-    lhs = vm.stack.pop()
-    vm.stack.append(lhs + rhs)
+    [lhs, rhs] = vm.pop(2)
+    vm.push(lhs + rhs)
 
 
 def op_sub(vm: VM) -> None:
-    vm._assert_stack('op_sub', 2)
-    rhs = vm.stack.pop()
-    lhs = vm.stack.pop()
-    vm.stack.append(lhs - rhs)
+    [lhs, rhs] = vm.pop(2)
+    vm.push(lhs - rhs)
 
 
 def op_mul(vm: VM) -> None:
-    vm._assert_stack('op_mul', 2)
-    rhs = vm.stack.pop()
-    lhs = vm.stack.pop()
-    vm.stack.append(lhs * rhs)
+    [lhs, rhs] = vm.pop(2)
+    vm.push(lhs * rhs)
 
 
 def op_pow(vm: VM) -> None:
-    vm._assert_stack('op_pow', 2)
-    rhs = vm.stack.pop()
-    lhs = vm.stack.pop()
-    vm.stack.append(lhs**rhs)
+    [lhs, rhs] = vm.pop(2)
+    vm.push(lhs**rhs)
 
 
 def op_div(vm: VM) -> None:
-    vm._assert_stack('op_div', 2)
-    rhs = vm.stack.pop()
-    lhs = vm.stack.pop()
-    vm.stack.append(lhs / rhs)
+    [lhs, rhs] = vm.pop(2)
+    vm.push(lhs / rhs)
 
 
 def op_cr(_: VM) -> None:
@@ -50,13 +39,12 @@ def op_cr(_: VM) -> None:
 
 
 def op_dup(vm: VM) -> None:
-    vm._assert_stack('op_dup', 1)
-    vm.stack.append(vm.stack[-1])
+    [value] = vm.pop()
+    vm.push(value, value)
 
 
 def op_print(vm: VM) -> None:
-    vm._assert_stack('op_print', 1)
-    val = vm.stack.pop()
+    [val] = vm.pop()
     print(val, end='')
 
 
@@ -65,15 +53,12 @@ def op_nop(_: VM) -> None:
 
 
 def op_flip(vm: VM) -> None:
-    vm._assert_stack('op_flip', 2)
-    rhs = vm.stack.pop()
-    lhs = vm.stack.pop()
-    vm.stack.extend([rhs, lhs])
+    [lhs, rhs] = vm.pop(2)
+    vm.push(rhs, lhs)
 
 
 def op_assert(vm: VM) -> None:
-    vm._assert_stack('op_assert', 1)
-    value = vm.stack.pop()
+    [value] = vm.pop()
     assert value, f'value={value}, stack={vm.stack}'
 
 
