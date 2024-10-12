@@ -10,6 +10,10 @@ def tokenize(line: str) -> list[str]:
     return shlex.split(line.strip())
 
 
+def strip_trailing_comment(line: str, commend_sep: str = '#') -> str:
+    return line.split(sep=commend_sep, maxsplit=1)[0]
+
+
 Op = t.Callable[['VM'], None]
 
 
@@ -48,6 +52,8 @@ class VM:
             self.eval_line(line)
 
     def eval_line(self, line: str) -> None:
+        line = strip_trailing_comment(line).strip()
+
         tokens = tokenize(line.strip())
 
         if not tokens:
