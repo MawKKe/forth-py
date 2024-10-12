@@ -43,6 +43,12 @@ def op_dup(vm: VM) -> None:
     vm.push(value, value)
 
 
+def op_dup_n(vm: VM) -> None:
+    [value, n] = vm.pop(2)
+    data = [value] * n
+    vm.push(*data)
+
+
 def op_print(vm: VM) -> None:
     [val] = vm.pop()
     print(val, end='')
@@ -78,6 +84,7 @@ def register_default_ops(vm: VM) -> VM:
     vm.register_op('CR', op_cr)
     vm.register_op('DUP', op_dup)
     vm.register_op('dup', op_dup)
+    vm.register_op('DUPN', op_dup_n)
     vm.register_op('assert', op_assert)
     vm.register_op('.', op_print)
     vm.register_op('halt', op_halt)

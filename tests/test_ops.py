@@ -50,6 +50,11 @@ def test_stack_manip() -> None:  # type: ignore
     assert vm.stack() == [1, 1]
 
     vm = forth.VM()
+    vm.eval_string('10 5')
+    forth.ops.op_dup_n(vm)
+    assert vm.stack() == [10, 10, 10, 10, 10]
+
+    vm = forth.VM()
     vm.eval_string('2 3')
     assert vm.stack() == [2, 3]
     forth.ops.op_flip(vm)

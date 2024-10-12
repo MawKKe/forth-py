@@ -1,5 +1,4 @@
-# a secret message to be printed into stdout
-104 101 108 108 111 32 119 111 114 108 100 33 12 WRITEB CR
+
 
 10 20 30.123456
 # 1 trace
