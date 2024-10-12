@@ -9,7 +9,7 @@ exercise for me. However, I had a lot of fun writing this!
 
 Write your program in a file (e.g. 'testi.forth'), then run it:
 
-    $ python3 forth.py testi.forth
+    $ python3 forth.py examples/meaning-of-life.forth
     42
 
 ## Testing the implementation
