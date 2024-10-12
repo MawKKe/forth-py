@@ -4,8 +4,12 @@
 
 Stack based computing for all!
 
-Probably not a 100% valid Forth implementation; mostly served as an educational
-exercise for me. However, I had a lot of fun writing this!
+I don't think this is going to be a 100% standard compliant Forth
+implementation (if there even is a standard...?). I just implement
+necessary features as I go.
+
+Working on this code is/was more of an educational experience for me.
+I've had loads of fun working on it 🙂
 
 ## Running
 
