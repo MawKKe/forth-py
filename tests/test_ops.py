@@ -42,23 +42,22 @@ def test_nop() -> None:  # type: ignore
     assert vm.env() == {}
 
 
-def test_stack_manip() -> None:  # type: ignore
+@pytest.mark.parametrize(
+    'setup,op,after',
+    [
+        ('1', forth.ops.op_dup, [1, 1]),
+        ('2 3', forth.ops.op_dup_n, [2, 2, 2]),
+        ('4 5', forth.ops.op_flip, [5, 4]),
+        ('6 7', forth.ops.op_drop, [6]),
+    ],
+)
+def test_stack_manip(setup, op, after) -> None:  # type: ignore
     vm = forth.VM()
-    vm.eval_string('1')
-    assert vm.stack() == [1]
-    forth.ops.op_dup(vm)
-    assert vm.stack() == [1, 1]
-
-    vm = forth.VM()
-    vm.eval_string('10 5')
-    forth.ops.op_dup_n(vm)
-    assert vm.stack() == [10, 10, 10, 10, 10]
-
-    vm = forth.VM()
-    vm.eval_string('2 3')
-    assert vm.stack() == [2, 3]
-    forth.ops.op_flip(vm)
-    assert vm.stack() == [3, 2]
+    vm.eval_string(setup)
+    before = vm.stack()
+    op(vm)
+    assert vm.stack() != before
+    assert vm.stack() == after
 
 
 def test_assert() -> None:  # type: ignore

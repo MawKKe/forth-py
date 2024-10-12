@@ -102,6 +102,10 @@ def op_flip(vm: VM) -> None:
     vm.push(rhs, lhs)
 
 
+def op_drop(vm: VM) -> None:
+    _ = vm.pop(1)
+
+
 def op_assert(vm: VM) -> None:
     [value] = vm.pop()
     assert value, f'value={value}, stack={vm.stack}'
@@ -134,6 +138,7 @@ def register_default_ops(vm: VM) -> VM:
     vm.register_op('DUP', op_dup)
     vm.register_op('DUPN', op_dup_n)
     vm.register_op('FLIP', op_flip)
+    vm.register_op('DROP', op_drop)
 
     vm.register_op('.', op_print)
     vm.register_op('WRITEB', op_writeb)
