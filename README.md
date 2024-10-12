@@ -1,5 +1,7 @@
 # Forth interpreter in Python
 
+[![Python CI](https://github.com/MawKKe/forth-py/actions/workflows/python-app.yml/badge.svg)](https://github.com/MawKKe/forth-py/actions/workflows/python-app.yml)
+
 Stack based computing for all!
 
 Probably not a 100% valid Forth implementation; mostly served as an educational
