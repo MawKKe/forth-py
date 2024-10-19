@@ -37,6 +37,27 @@ def test_pop() -> None:
         _ = vm.pop(4)
 
 
+def test_vm_getters_return_no_references_to_internal_data() -> None:
+    vm = forth.VM()
+    stack = vm.stack()
+    assert stack == []
+    stack.append(1)
+    assert stack == [1]
+    assert vm.stack() == []
+
+    env = vm.env()
+    assert env.keys() == set()
+    env['foo'] = None
+    assert set(env.keys()) == {'foo'}
+    assert set(vm.env().keys()) == set()
+
+    ctr = vm.get_counters()
+    assert ctr.num_tokens == 0
+    ctr.num_tokens += 1  # get_counters() returns a copy
+    assert ctr.num_tokens == 1
+    assert vm.get_counters().num_tokens == 0
+
+
 def test_func_def_and_call() -> None:
     prog = """
     : MUL2 2 * ;
@@ -66,10 +87,6 @@ def test_counters() -> None:  # type: ignore
     vm.eval_string('7 + fun')
     assert vm.get_counters().num_tokens == 17
     assert vm.stack() == [183]
-
-    ctr = vm.get_counters()
-    ctr.num_tokens += 1  # get_counters() returns a copy
-    assert vm.get_counters().num_tokens == 17
 
 
 def test_string_handling(capfdbinary) -> None:  # type: ignore

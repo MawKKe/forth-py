@@ -23,10 +23,10 @@ class VM:
     _counters: Counters = field(default_factory=Counters)
 
     def stack(self) -> list:
-        return self._stack
+        return list(self._stack)
 
     def env(self) -> dict:
-        return self._env
+        return dict(self._env)
 
     def is_halted(self) -> bool:
         return self._halted
