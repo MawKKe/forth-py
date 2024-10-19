@@ -15,7 +15,7 @@ def main(argv: list[str]) -> int:
     p = argparse.ArgumentParser(prog=Path(argv[0]).name)
     p.add_argument('-c', type=str, dest='inline_src', metavar='inline-src')
     p.add_argument('file_src', metavar='file-src', nargs='*', type=argparse.FileType('r'))
-    p.add_argument('--show-stats', action='store_true')
+    p.add_argument('--show-counters', action='store_true')
     args = p.parse_args(argv[1:])
 
     vm = forth.VM()
@@ -38,7 +38,7 @@ def main(argv: list[str]) -> int:
         print('error: no sources provided', file=sys.stderr)
         return -1
 
-    if args.show_stats:
+    if args.show_counters:
         print('# counters:', vm.get_counters())
 
     return vm.status()

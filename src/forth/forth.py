@@ -1,5 +1,5 @@
 import typing as t
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from functools import partial
 
 from . import utils
@@ -8,12 +8,19 @@ Op = t.Callable[['VM'], None]
 
 
 @dataclass
+class Counters:
+    num_tokens: int = 0
+
+    def tick_tokens(self) -> None:
+        self.num_tokens += 1
+
+
+@dataclass
 class VM:
     _stack: list = field(default_factory=list)
     _env: dict[str, Op] = field(default_factory=dict)
     _halted: bool = False
-
-    _ctr_tokens_processed: int = 0
+    _counters: Counters = field(default_factory=Counters)
 
     def stack(self) -> list:
         return self._stack
@@ -53,7 +60,7 @@ class VM:
         for tok in stream:
             if self.is_halted():
                 return
-            self._ctr_tokens_processed += 1
+            self._counters.tick_tokens()
             if tok == ':':
                 assert not in_func_def, 'Already inside function definition'
                 in_func_def = True
@@ -86,7 +93,5 @@ class VM:
     def eval_string(self, source: str) -> None:
         self.eval_token_stream(utils.gen_tokens(source))
 
-    def get_counters(self) -> dict:
-        return {
-            'tokens_processed': self._ctr_tokens_processed,
-        }
+    def get_counters(self) -> Counters:
+        return replace(self._counters)

@@ -59,13 +59,17 @@ def test_func_def_and_call() -> None:
 def test_counters() -> None:  # type: ignore
     vm = forth.VM()
     forth.ops.register_default_ops(vm)
-    assert vm.get_counters()['tokens_processed'] == 0
+    assert vm.get_counters().num_tokens == 0
     vm.eval_string('1 1 +')
-    assert vm.get_counters()['tokens_processed'] == 3
+    assert vm.get_counters().num_tokens == 3
     vm.eval_string(': fun 20 * 3 + ;')
     vm.eval_string('7 + fun')
-    assert vm.get_counters()['tokens_processed'] == 17
+    assert vm.get_counters().num_tokens == 17
     assert vm.stack() == [183]
+
+    ctr = vm.get_counters()
+    ctr.num_tokens += 1  # get_counters() returns a copy
+    assert vm.get_counters().num_tokens == 17
 
 
 def test_string_handling(capfdbinary) -> None:  # type: ignore

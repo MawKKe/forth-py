@@ -84,9 +84,9 @@ def test_show_stats(monkeypatch, capfdbinary):  # type: ignore
     forth.main.main(['forth', '-c', src])
 
     out, _ = capfdbinary.readouterr()
-    assert b"# counters: {'tokens_processed':" not in out
+    assert b'# counters: Counters(' not in out
 
-    forth.main.main(['forth', '-c', src, '--show-stats'])
+    forth.main.main(['forth', '-c', src, '--show-counters'])
 
     out, _ = capfdbinary.readouterr()
-    assert b"# counters: {'tokens_processed':" in out
+    assert b'# counters: Counters(' in out
