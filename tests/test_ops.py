@@ -13,6 +13,7 @@ import forth.ops
         (forth.ops.op_sub, '1 1', 0),
         (forth.ops.op_mul, '3 2', 6),
         (forth.ops.op_div, '10 2', 5),
+        (forth.ops.op_mod, '5 2', 1),
         (forth.ops.op_pow, '2 5', 32),
     ],
 )

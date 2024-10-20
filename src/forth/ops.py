@@ -31,6 +31,10 @@ def op_mul(vm: VM) -> None:
     generic_binop(vm, operator.mul)
 
 
+def op_mod(vm: VM) -> None:
+    generic_binop(vm, operator.mod)
+
+
 def op_pow(vm: VM) -> None:
     generic_binop(vm, operator.pow)
 
@@ -125,6 +129,7 @@ def register_default_ops(vm: VM) -> VM:
     vm.register_op('-', op_sub)
     vm.register_op('*', op_mul)
     vm.register_op('/', op_div)
+    vm.register_op('%', op_mod)
     vm.register_op('POW', op_pow)
 
     vm.register_op('<', op_lt)
