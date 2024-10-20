@@ -10,7 +10,7 @@ import forth.ops
     'op, prog, expect',
     [
         (forth.ops.op_add, '1 1', 2),
-        (forth.ops.op_sub, '1 1', 0),
+        (forth.ops.op_sub, '1 2', -1),
         (forth.ops.op_mul, '3 2', 6),
         (forth.ops.op_div, '10 2', 5),
         (forth.ops.op_mod, '5 2', 1),
